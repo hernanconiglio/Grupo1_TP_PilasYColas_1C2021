@@ -221,6 +221,18 @@ class EscritorioDeAtencion:
           cantCrit += 1 
       return cantCrit
 
+    def cantidadDeEstanteriasCriticasR(self,nroFila):
+      cantCrit = 0
+      if len(self.deposito[nroFila]) == 0:
+        cantCrit = 0
+      else:
+        estant = self.deposito[nroFila][len(self.deposito[nroFila])-1]
+        if isinstance(estant,Estanteria) and estant.esCritica():
+          cantCrit += 1
+        cantCrit += self.deposito[nroFila][:len(self.deposito[nroFila])-1]
+      return cantCrit
+
+
     def estanteriaMenosRecargada(self):
       nFila = nCol = 0
       minEstant = 999999
@@ -293,109 +305,3 @@ class EscritorioDeAtencion:
       
                 
                 
-#### Tests 
-
-estanteria1 = Estanteria(10)
-estanteria2 = Estanteria(20)
-estanteria3 = Estanteria(30)
-
-libro10 = Libro(CodigoLibro('abc','00010'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro11 = Libro(CodigoLibro('abc','00011'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro12 = Libro(CodigoLibro('abc','00012'),GeneroLibro.Poesia,TipoLibro.Internacional)
-libro13 = Libro(CodigoLibro('abc','00013'),GeneroLibro.Poesia,TipoLibro.Internacional)
-libro14 = Libro(CodigoLibro('abc','00014'),GeneroLibro.Poesia,TipoLibro.Internacional)
-libro15 = Libro(CodigoLibro('abc','00015'),GeneroLibro.Poesia,TipoLibro.Internacional)
-libro16 = Libro(CodigoLibro('abc','00016'),GeneroLibro.Poesia,TipoLibro.Internacional)
-libro17 = Libro(CodigoLibro('abc','00017'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro18 = Libro(CodigoLibro('abc','00018'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro19 = Libro(CodigoLibro('abc','00019'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro20 = Libro(CodigoLibro('abc','00020'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro21 = Libro(CodigoLibro('abc','00021'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro22 = Libro(CodigoLibro('abc','00022'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro23 = Libro(CodigoLibro('abc','00023'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro24 = Libro(CodigoLibro('abc','00024'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro25 = Libro(CodigoLibro('abc','00025'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro26 = Libro(CodigoLibro('abc','00026'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro27 = Libro(CodigoLibro('abc','00027'),GeneroLibro.Teatro,TipoLibro.Nacional)
-libro28 = Libro(CodigoLibro('abc','00028'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro29 = Libro(CodigoLibro('abc','00029'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro30 = Libro(CodigoLibro('abc','00030'),GeneroLibro.Poesia,TipoLibro.Nacional)
-libro31 = Libro(CodigoLibro('abc','00031'),GeneroLibro.Poesia,TipoLibro.Nacional)
-
-
-estanteria1.guardarLibro(libro10) 
-estanteria1.guardarLibro(libro11) 
-estanteria1.guardarLibro(libro12) 
-estanteria1.guardarLibro(libro13) 
-estanteria1.guardarLibro(libro14) 
-estanteria1.guardarLibro(libro15) 
-estanteria1.guardarLibro(libro16) 
-estanteria1.guardarLibro(libro17) 
-estanteria2.guardarLibro(libro18) 
-estanteria2.guardarLibro(libro19) 
-estanteria2.guardarLibro(libro20) 
-estanteria2.guardarLibro(libro21) 
-estanteria2.guardarLibro(libro22) 
-estanteria2.guardarLibro(libro23) 
-estanteria2.guardarLibro(libro24) 
-estanteria3.guardarLibro(libro25) 
-estanteria3.guardarLibro(libro26) 
-estanteria3.guardarLibro(libro27) 
-estanteria3.guardarLibro(libro28) 
-estanteria3.guardarLibro(libro29) 
-estanteria3.guardarLibro(libro30) 
-estanteria3.guardarLibro(libro31) 
-
-
-biblioteca = EscritorioDeAtencion(5,6)
-biblioteca.establecerEstanteria(1,3,estanteria1)
-biblioteca.establecerEstanteria(3,5,estanteria2)
-biblioteca.establecerEstanteria(4,1,estanteria3)
-print(biblioteca)
-
-libro682 = Libro(CodigoLibro('abc','00682'),GeneroLibro.Narracion,TipoLibro.Internacional)
-libro683 = Libro(CodigoLibro('abc','00683'),GeneroLibro.Narracion,TipoLibro.Internacional)
-libro684 = Libro(CodigoLibro('abc','00684'),GeneroLibro.Narracion,TipoLibro.Internacional)
-libro685 = Libro(CodigoLibro('abc','00685'),GeneroLibro.Narracion,TipoLibro.Internacional)
-libro686 = Libro(CodigoLibro('abc','00686'),GeneroLibro.Narracion,TipoLibro.Internacional)
-libro687 = Libro(CodigoLibro('abc','00687'),GeneroLibro.Narracion,TipoLibro.Internacional)
-
-colaLibros1 = Cola()
-colaLibros1.push(libro682)
-colaLibros1.push(libro683)
-colaLibros1.push(libro684)
-colaLibros1.push(libro685)
-colaLibros1.push(libro686)
-colaLibros1.push(libro687)
-
-biblioteca.guardarLibros(colaLibros1)
-print("imprimo biblioteca luego de guardarLibros")
-print(biblioteca)
-colaCodLibros1 = Cola()
-colaCodLibros1.push("abc00015")
-colaCodLibros1.push("abc00021")
-colaCodLibros1.push("abc00010")
-colaCodLibros1.push("AAA09873")
-colaCodLibros1.push("AAA09872")
-
-print(estanteria1)
-print(estanteria2)
-print(estanteria3)
-print("biblioteca deposito 1,3 busco libro que está primero en la cola colaCodLibros1")
-print(biblioteca.deposito[1][3].buscarLibro(colaCodLibros1.top()))   #.buscarLibro(colaCodLibros1.top()))
-
-pilaSacadosBibl=Pila()
-pilaSacadosBibl = biblioteca.sacarLibros(colaCodLibros1)
-print("vuelvo a imprimir biblioteca")
-print(biblioteca)
-print("\n")
-print("Imprimo la pila de los sacados")
-print(pilaSacadosBibl)
-print("\n")
-print("#######################################################################################")
-print(biblioteca)
-print("--------------------------------------------------------------------------------------------")
-print("AHORA MUEVO EL LIBRO abc00011")
-print("--------------------------------------------------------------------------------------------")
-biblioteca.moverLibro("abc00011",10,30)
-print(biblioteca)
