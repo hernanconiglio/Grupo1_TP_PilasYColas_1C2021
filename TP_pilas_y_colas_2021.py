@@ -213,23 +213,13 @@ class EscritorioDeAtencion:
     def establecerEstanteria(self, nroFila, nroColumna, estanteria):
       self.deposito[nroFila][nroColumna] = estanteria
 
+
     def cantidadDeEstanteriasCriticas(self,nroFila):
       cantCrit = 0
       for i in range(len(self.deposito[nroFila])):
         estant = self.deposito[nroFila][i]
         if isinstance(estant,Estanteria) and estant.esCritica():
           cantCrit += 1 
-      return cantCrit
-
-    def cantidadDeEstanteriasCriticasR(self,nroFila):
-      cantCrit = 0
-      if len(self.deposito[nroFila]) == 0:
-        cantCrit = 0
-      else:
-        estant = self.deposito[nroFila][len(self.deposito[nroFila])-1]
-        if isinstance(estant,Estanteria) and estant.esCritica():
-          cantCrit += 1
-        cantCrit += self.deposito[nroFila][:len(self.deposito[nroFila])-1]
       return cantCrit
 
 
