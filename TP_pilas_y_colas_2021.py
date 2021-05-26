@@ -63,13 +63,13 @@ class Estanteria:
         cadenaPrintComp = "Pila Nacionales: " + str(self.pilaNac) + "\n" + "Pila Internacionales: " + str(self.pilaInternac)
         cadenaPrintS = str(self.pilaNac) + str(self.pilaInternac)
         cadenaPrintN = str(self.numero)
-        return cadenaPrintS
+        return cadenaPrintN
 
     def guardarLibro(self,libro):
         if libro.nacionalidad.name == "Nacional":
             self.pilaNac.push(libro)
             if self.pilaNac.size() > self.cantCritica:
-                print("Superado cantidad crítica pila Nacional, (Estant/cant:",self.numero, "/", self.pilaNac.size())
+                print("Superado cantidad crítica pila Nacional, Estant/cant:",self.numero, "/", self.pilaNac.size())
         else:
             self.pilaInternac.push(libro)
             if self.pilaInternac.size() > self.cantCritica:
@@ -113,7 +113,35 @@ class Estanteria:
           self.pilaInternac.push(auxPInt.pop())
         
         return libro
-    
+
+    ### Esta función es de prueba, solo por si recomendar no implicaba desapilarlo         ###
+    ### Pero igualmente con el script de prueba no funciona porque desapila el recomendado ###
+    def libroParaRecomendarSinDesapilar(self,generoDeLibro):
+        encontrado = False
+        libro = None
+        auxPNac = Pila()
+        auxPInt = Pila()
+        self.pilaNac.clone(auxPNac)
+        self.pilaInternac.clone(auxPInt)
+
+        while not encontrado and not auxPNac.empty():
+          if self.pilaNac.top().genero == generoDeLibro:
+            encontrado = True
+            libro = auxPNac.top()
+          else:
+            auxPNac.pop()
+
+        while not encontrado and not auxPInt.empty():
+          if self.pilaInternac.top().genero == generoDeLibro:
+            encontrado = True
+            libro = auxPInt.top()
+          else:
+            auxPInt.pop()
+
+        return libro
+
+
+
     def buscarLibro(self,codigoLibro):
         encontrado = False
         libro = None
