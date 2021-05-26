@@ -174,3 +174,6 @@ for libroData in estanteriasData[104][1]:
 print("\nCantidad de estanterías criticas en la fila 1 despues:",escritorioDeAtencion.cantidadDeEstanteriasCriticas(1))
 print("Cantidad de estanterías criticas en la fila 5 despues:",escritorioDeAtencion.cantidadDeEstanteriasCriticas(5))
 print("-----------------------------------------------------------------------")
+print("-----------------------------------------------------------------------")
+print("\nIterativa - Cantidad de estanterías criticas en la fila 1 despues:",escritorioDeAtencion.cantidadDeEstanteriasCriticasIterativa(1))
+print("Iterativa - Cantidad de estanterías criticas en la fila 5 despues:",escritorioDeAtencion.cantidadDeEstanteriasCriticasIterativa(5))

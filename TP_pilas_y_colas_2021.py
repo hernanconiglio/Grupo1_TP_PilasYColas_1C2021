@@ -215,13 +215,33 @@ class EscritorioDeAtencion:
       self.deposito[nroFila][nroColumna] = estanteria
 
 
-    def cantidadDeEstanteriasCriticas(self,nroFila):
+    def cantidadDeEstanteriasCriticasIterativa(self,nroFila):
       cantCrit = 0
       for i in range(len(self.deposito[nroFila])):
         estant = self.deposito[nroFila][i]
         if isinstance(estant,Estanteria) and estant.esCritica():
           cantCrit += 1 
       return cantCrit
+
+
+    ## Operación que devuelve cantidad de estanterías Críticas con función recursiva ##
+    def cantidadDeEstanteriasCriticas(self,nroFila):
+      cantCrit = 0
+      fila = []
+      for i in range(len(self.deposito[nroFila])):
+        fila.append(self.deposito[nroFila][i])
+      cantCrit += self.cantCriticasEnFila(fila)
+      return cantCrit
+
+    def cantCriticasEnFila(self,fila):
+      cantCrit = 0
+      if len(fila) > 0:
+        estant = fila[len(fila)-1]
+        if isinstance(estant,Estanteria) and estant.esCritica():
+          cantCrit += 1
+        cantCrit = cantCrit + self.cantCriticasEnFila(fila[:len(fila)-1])
+      return cantCrit
+
 
 
     def estanteriaMenosRecargada(self):
