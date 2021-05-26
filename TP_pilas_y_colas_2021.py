@@ -114,33 +114,6 @@ class Estanteria:
         
         return libro
 
-    ### Esta función es de prueba, solo por si recomendar no implicaba desapilarlo         ###
-    ### Pero igualmente con el script de prueba no funciona porque desapila el recomendado ###
-    def libroParaRecomendarSinDesapilar(self,generoDeLibro):
-        encontrado = False
-        libro = None
-        auxPNac = Pila()
-        auxPInt = Pila()
-        self.pilaNac.clone(auxPNac)
-        self.pilaInternac.clone(auxPInt)
-
-        while not encontrado and not auxPNac.empty():
-          if self.pilaNac.top().genero == generoDeLibro:
-            encontrado = True
-            libro = auxPNac.top()
-          else:
-            auxPNac.pop()
-
-        while not encontrado and not auxPInt.empty():
-          if self.pilaInternac.top().genero == generoDeLibro:
-            encontrado = True
-            libro = auxPInt.top()
-          else:
-            auxPInt.pop()
-
-        return libro
-
-
 
     def buscarLibro(self,codigoLibro):
         encontrado = False
