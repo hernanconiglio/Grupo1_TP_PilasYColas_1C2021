@@ -224,7 +224,7 @@ class EscritorioDeAtencion:
       return cantCrit
 
 
-    ## Operación que devuelve cantidad de estanterías Críticas con función recursiva ##
+    ## Operación que devuelve cantidad de estanterías Críticas con llamada a función recursiva ##
     def cantidadDeEstanteriasCriticas(self,nroFila):
       cantCrit = 0
       fila = []
