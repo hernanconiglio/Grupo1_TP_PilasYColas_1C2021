@@ -62,7 +62,7 @@ class Estanteria:
     def __repr__(self):
         cadenaPrintComp = "Pila Nacionales: " + str(self.pilaNac) + "\n" + "Pila Internacionales: " + str(self.pilaInternac)
         cadenaPrintS = str(self.pilaNac) + str(self.pilaInternac)
-        cadenaPrintN = str(self.numero)
+        cadenaPrintN = str(self.numero) + str(self.librosPorTipo())
         return cadenaPrintN
 
     def guardarLibro(self,libro):
@@ -215,6 +215,15 @@ class EscritorioDeAtencion:
       self.deposito[nroFila][nroColumna] = estanteria
 
 
+    def cantidadDeEstanteriasCriticas(self,nroFila,columna=0):
+      cantCrit = 0
+      if columna < len(self.deposito[nroFila]):
+        estant = self.deposito[nroFila][columna]
+        if isinstance(estant,Estanteria) and estant.esCritica():
+          cantCrit += 1
+        cantCrit = cantCrit + self.cantidadDeEstanteriasCriticas(nroFila,columna+1)
+      return cantCrit
+
     def cantidadDeEstanteriasCriticasIterativa(self,nroFila):
       cantCrit = 0
       for i in range(len(self.deposito[nroFila])):
@@ -222,26 +231,6 @@ class EscritorioDeAtencion:
         if isinstance(estant,Estanteria) and estant.esCritica():
           cantCrit += 1 
       return cantCrit
-
-
-    ## Operación que devuelve cantidad de estanterías Críticas con llamada a función recursiva ##
-    def cantidadDeEstanteriasCriticas(self,nroFila):
-      cantCrit = 0
-      fila = []
-      for i in range(len(self.deposito[nroFila])):
-        fila.append(self.deposito[nroFila][i])
-      cantCrit += self.cantCriticasEnFila(fila)
-      return cantCrit
-
-    def cantCriticasEnFila(self,fila):
-      cantCrit = 0
-      if len(fila) > 0:
-        estant = fila[len(fila)-1]
-        if isinstance(estant,Estanteria) and estant.esCritica():
-          cantCrit += 1
-        cantCrit = cantCrit + self.cantCriticasEnFila(fila[:len(fila)-1])
-      return cantCrit
-
 
 
     def estanteriaMenosRecargada(self):
@@ -283,7 +272,6 @@ class EscritorioDeAtencion:
             if isinstance(self.deposito[i][j],Estanteria):
               if self.deposito[i][j].buscarLibro(colaCodLibros.top()) != None:
                 pilaSacados.push(self.deposito[i][j].prestarLibro(colaCodLibros.top()))
-              #else:
         colaCodLibros.pop()
       return pilaSacados
 
