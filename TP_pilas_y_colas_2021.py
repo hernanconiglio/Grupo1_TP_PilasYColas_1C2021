@@ -371,3 +371,6 @@ class EscritorioDeAtencion:
       if not encontrado: ## valida si no fue encontrado el libro, arroja mensaje print.
         print("No se encontró el código de libro o la EstanteríaOrigen o la EstanteríaDestino")
       
+
+
+
