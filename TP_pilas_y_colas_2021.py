@@ -32,6 +32,9 @@ def validarTipoLibro(tipoLib):
   else:
     return tipoLib
 
+###################
+#### TDA Libro ####
+###################
 
 class Libro:
     def __init__(self,codigoLibro=CodigoLibro("zzz","99999"),genero=GeneroLibro.Teatro,nacionalidad=TipoLibro.Nacional):
@@ -45,6 +48,9 @@ class Libro:
         return cadenaPrintS
 
 
+########################
+#### TDA Estanteria ####
+########################
 
 class Estanteria:
     def __init__(self,numero=0,cantCritica=50):
@@ -236,15 +242,14 @@ class Estanteria:
         return cantGen ## retorna el valor de la cantidad de libros por genero
 
 
+##################################
+#### TDA EscritorioDeAtencion ####
+##################################
+
 class EscritorioDeAtencion:
     def __init__(self,nroFilas=0, nroColumnas=0):
-      ## se define depósito como un arreglo bidimensional de nroFilas por nroColumnas de tipo Estantería
-      ## inicializado con zeros      
-      self.deposito = np.zeros((nroFilas,nroColumnas),Estanteria)
-      ## inicializo la matriz con None ##
-      for i in range(nroFilas):
-        for j in range(nroColumnas):
-          self.deposito[i][j] = None
+      ## se define depósito como un arreglo bidimensional de nroFilas por nroColumnas de tipo None
+      self.deposito = np.full((nroFilas,nroColumnas),None)
 
     def __repr__(self):
       cadenaPrint = str(self.deposito) + "\n"
@@ -366,5 +371,3 @@ class EscritorioDeAtencion:
       if not encontrado: ## valida si no fue encontrado el libro, arroja mensaje print.
         print("No se encontró el código de libro o la EstanteríaOrigen o la EstanteríaDestino")
       
-                
-                
