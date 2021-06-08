@@ -14,3 +14,6 @@ class CodigoLibro: # TDA para definir el código de cada Libro
     def __repr__(self):
         cadenaPrint = self.codLetras + self.codNumero
         return cadenaPrint
+
+    def __eq__(self,otro):
+        return self.codLetras == otro.codLetras and self.codNumero == otro.codNumero

@@ -32,6 +32,58 @@ def validarTipoLibro(tipoLib):
   else:
     return tipoLib
 
+
+def libroEnPilaADeGenero(pila,generoDelLibro):
+    encontrado = False
+    libro = None
+    auxPila = Pila()
+    while not encontrado and not pila.empty():
+      if pila.top().generoDeLibro() == generoDelLibro:
+        encontrado = True
+        libro = pila.pop()
+      else:
+        auxPila.push(pila.pop())
+    while not auxPila.empty():
+      pila.push(auxPila.pop())
+    return libro
+
+def buscarLibroEnPilaYRetira(pila,codigoDelLibro):
+    encontrado = False
+    libro = None
+    auxPila = Pila()
+    while not encontrado and not pila.empty():
+      if pila.top().codigoDeLibro() == codigoDelLibro:
+        encontrado = True
+        libro = pila.pop()
+      else:
+        auxPila.push(pila.pop())
+    while not auxPila.empty():
+      pila.push(auxPila.pop())
+    return libro
+
+def buscarLibroEnPilaEInforma(pila,codigoDelLibro):
+    encontrado = False
+    libro = None
+    auxPila = Pila()
+    while not encontrado and not pila.empty():
+      if pila.top().codigoDeLibro() == codigoDelLibro:
+        encontrado = True
+        libro = pila.top()
+      else:
+        auxPila.push(pila.pop())
+    while not auxPila.empty():
+      pila.push(auxPila.pop())
+    return libro
+
+def librosEnPilaDelGenero(pila,generoLibro):
+  cantGen = 0
+  auxP = Pila()
+  pila.clone(auxP)
+  while not auxP.empty():
+    if auxP.pop().generoDelLibro() == generoLibro:
+      cantGen += 1
+  return cantGen
+
 ###################
 #### TDA Libro ####
 ###################
@@ -45,12 +97,23 @@ class Libro:
     def __repr__(self):
         cadenaPrintComp = str(self.codigoLibro) + "-" + str(self.genero.name) + "-" + str(self.nacionalidad.name)
         cadenaPrintS = str(self.codigoLibro) # hace un casteo de codigoLibro a string
-        return cadenaPrintS
+        return cadenaPrintComp
+
+    def esNacional(self):
+        return self.nacionalidad == TipoLibro.Nacional
+
+    def generoDelLibro(self):
+      return self.genero
+
+    def codigoDelLibro(self):
+      return self.codigoLibro
+
 
 
 ########################
 #### TDA Estanteria ####
 ########################
+
 
 class Estanteria:
     def __init__(self,numero=0,cantCritica=50):
@@ -68,8 +131,11 @@ class Estanteria:
         cadenaPrintN = str(self.numero) + str(self.librosPorTipo()) # castea y concatena
         return cadenaPrintN
 
+    def nroDeEstanteria(self):
+        return self.numero
+
     def guardarLibro(self,libro):
-        if libro.nacionalidad.name == "Nacional": ## valida si el name de la variable nacionalidad,
+        if libro.esNacional(): ## valida si el name de la variable nacionalidad,
         ## que es de tipo Enum, es igual al valor "Nacional"
             self.pilaNac.push(libro) ## pone el libro en el tope de la pila pilaNac
             if self.pilaNac.size() > self.cantCritica: ## valida si el tamaño de la pilaNac es 
@@ -94,121 +160,27 @@ class Estanteria:
           ## en el tope de la pilaInternac a la variable primerLibro
         return primerLibro ## la función retorna la variable primerLibro con la referencia al libro
 
+
     def libroParaRecomendar(self,generoDeLibro):
         ## se inicializan variables
-        encontrado = False
-        libro = None
-        auxPNac = Pila()
-        auxPInt = Pila()
-
-        while not encontrado and not self.pilaNac.empty(): ## bucle mientras no encontrado y no está
-        ## vacía la pilaNac
-          if self.pilaNac.top().genero == generoDeLibro: # si el genero del libro que está en el tope 
-          ## de la pilaNac es igual al valor que se pasó por parámetro en generoDeLibro
-            encontrado = True ## setea en verdadero la variable encontrado
-            libro = self.pilaNac.pop() ## asigna el valor de referencia del libro que está en el tope
-            ## de la pilaNac y lo quita de la pila
-          else: ## si no
-            auxPNac.push(self.pilaNac.pop()) ## coloca en el tope de la pila auxPNac la referencia al 
-            ## libro del tope de la pilaNac y lo quita de esa pila.
-        
-        while not auxPNac.empty(): ## bucle while no está vacía la pila auxPNac 
-        ## es para volver a aplicar los libros de la pilaNac que se desapilaron en la auxPNac
-          self.pilaNac.push(auxPNac.pop()) ## coloca en el tope de la pila pilaNac la referencia al
-          ## libro del tope de la auxPNac y lo quita de esa pila.
-
-        while not encontrado and not self.pilaInternac.empty(): ## bucle mientras no encontrado y no está
-         ## vacía la pilaInternac
-          if self.pilaInternac.top().genero == generoDeLibro: # si el genero del libro que está en el tope 
-          ## de la pilaInternac es igual al valor que se pasó por parámetro en generoDeLibro
-            encontrado = True ## setea en verdadero la variable encontrado
-            libro = self.pilaInternac.pop() ## asigna el valor de referencia del libro que está en el tope
-            ## de la pilaInternac y lo quita de la pila
-          else: ## si no
-            auxPInt.push(self.pilaInternac.pop()) ## coloca en el tope de la pila auxPInternac la referencia al 
-            ## libro del tope de la pilaInternac y lo quita de es pila.
-        
-        while not auxPInt.empty(): ## bucle while no está vacía la pila auxPInternac 
-        ## es para volver a aplicar los libros de la pilaInternac que se desapilaron en la auxPInternac
-          self.pilaInternac.push(auxPInt.pop()) ## coloca en el tope de la pila pilaInternac la referencia al
-          ## libro del tope de la auxPInternac y lo quita de esa pila.
-        
-        return libro ## la función retorna la variable libro que contiene la referencia al libro a recomendar
+        libro = libroEnPilaADeGenero(self.pilaNac,generoDeLibro)
+        if libro == None:
+          libro = libroEnPilaADeGenero(self.pilaInternac,generoDeLibro)
+        return libro
 
 
     def buscarLibro(self,codigoLibro):
       ## se inicializan variables
-        encontrado = False
-        libro = None
-        auxPNac = Pila()
-        auxPInt = Pila()
-        ## se clonan las pilas pilaNac y pilaInternac
-        self.pilaNac.clone(auxPNac)
-        self.pilaInternac.clone(auxPInt)
-
-        while not encontrado and not auxPNac.empty(): ## bucle while no encontrado y no está
-        ## vacía la pila auxPNac
-          if str(auxPNac.top().codigoLibro) == str(codigoLibro): ## valida si el codigo del libro que
-          ## está en el tope de la pila es igual al codigoLibro pasado por parámetro a la función.
-            encontrado = True ## setea variable encontrado en verdadero
-            libro = auxPNac.top() ## asigna el valor de referencia del libro que está en el tope
-            ## de la pila auxPNac.
-          else: ## si no
-            auxPNac.pop() ## desapila el elemento del tope de la pila auxPNac
-
-        while not encontrado and not auxPInt.empty(): ## bucle while no encontrado y no está
-        ## vacía la pila auxPInternac
-          if str(auxPInt.top().codigoLibro) == str(codigoLibro): ## valida si el codigo del libro que
-          ## está en el tope de la pila es igual al codigoLibro pasado por parámetro a la función.
-            encontrado = True ## setea variable encontrado en verdadero
-            libro = auxPInt.top() ## asigna el valor de referencia del libro que está en el tope
-             ## de la pila auxPInternac.
-          else: ## si no
-            auxPInt.pop() ## desapila el elemento del tope de la pila auxPNac
-
-        return libro ## la función retorna la variable libro que contiene la referencia al libro buscado
+        libro = buscarLibroEnPilaEInforma(self.pilaNac,codigoLibro)
+        if libro == None:
+          libro = buscarLibroEnPilaEInforma(self.pilaInternac,codigoLibro)
+        return libro
 
     def prestarLibro(self,codigoLibro):
-      ## se inicializan variables
-        encontrado = False
-        libro = None
-        auxPNac = Pila()
-        auxPInt = Pila()
-
-        while not encontrado and not self.pilaNac.empty(): ## bucle while no encontrado y no está
-        ## vacía la pila pilaNac
-          if str(self.pilaNac.top().codigoLibro) == str(codigoLibro): ## valida si el codigo del libro que
-          ## está en el tope de la pila es igual al codigoLibro pasado por parámetro a la función.
-            encontrado = True ##setea variable encontrado en verdadero
-            libro = self.pilaNac.pop() ## asigna el valor de referencia del libro que está en el tope
-            ## de la pilaNac y lo quita de la pila
-          else: # si no
-            auxPNac.push(self.pilaNac.pop()) ## coloca en el tope de la pila auxPNac la referencia al 
-            ## libro del tope de la pilaNac y lo quita de esa pila.
-        
-        while not auxPNac.empty(): ## bucle while no está vacía la pila auxPNac 
-        ## es para volver a aplicar los libros de la pilaNac que se desapilaron en la auxPNac
-          self.pilaNac.push(auxPNac.pop()) ## coloca en el tope de la pila pilaNac la referencia al
-          ## libro del tope de la auxPNac y lo quita de esa pila.
-
-        while not encontrado and not self.pilaInternac.empty(): ## bucle while no encontrado y no está
-        ## vacía la pila pilaInternac
-          if str(self.pilaInternac.top().codigoLibro) == str(codigoLibro): # valida si el codigo del libro que
-          ## está en el tope de la pila es igual al codigoLibro pasado por parámetro a la función.
-            encontrado = True ##setea variable encontrado en verdadero
-            libro = self.pilaInternac.pop() ## asigna el valor de referencia del libro que está en el tope
-            ## de la pilaInternac y lo quita de la pila
-          else: ## si no
-            auxPInt.push(self.pilaInternac.pop()) ## coloca en el tope de la pila auxPInt la referencia al 
-            ## libro del tope de la pilaInternac y lo quita de esa pila.
-        
-        while not auxPInt.empty(): ## bucle while no está vacía la pila auxPInt 
-        ## es para volver a aplicar los libros de la pilaInternac que se desapilaron en la auxPInt
-          self.pilaInternac.push(auxPInt.pop()) ## coloca en el tope de la pila pilaInternac la referencia al
-          ## libro del tope de la auxPInt y lo quita de esa pila.
-
-        return libro ## la función retorna la variable libro que contiene la referencia al libro prestado
-
+        libro = buscarLibroEnPilaYRetira(self.pilaNac,codigoLibro)
+        if libro == None:
+          libro = buscarLibroEnPilaYRetira(self.pilaInternac,codigoLibro)
+        return libro
    
     def librosPorTipo(self):
       return self.pilaNac.size(), self.pilaInternac.size() ## retorna tupla con el valor del tamaño de la pilaNac
@@ -223,23 +195,8 @@ class Estanteria:
 
     def librosPorGenero(self,generoLibro):
         ## se inicializan variables
-        cantGen = 0 ## contador
-        auxPNac = Pila()
-        auxPInt = Pila()
-        ## se clonan las pilas pilaNac y pilaInternac
-        self.pilaNac.clone(auxPNac)
-        self.pilaInternac.clone(auxPInt)  
-
-        while not auxPNac.empty(): ## bucle while no está vacía la pila auxPNac
-          if auxPNac.pop().genero == generoLibro: ## valida si el genero del libro que desapila de la auxPNac es
-          ## igual al generoLibro pasado por parámetro.
-            cantGen +=1 ## suma 1 al contador de cantidad de libros por genero
-
-        while not auxPInt.empty(): ## bucle while no está vacía la pila auxPInt
-          if auxPInt.pop().genero == generoLibro: ## valida si el genero del libro que desapila de la auxPInt es
-          ## igual al generoLibro pasado por parámetro.
-            cantGen +=1 ## suma 1 al contador de cantidad de libros por genero
-        return cantGen ## retorna el valor de la cantidad de libros por genero
+        cantGen = librosEnPilaDelGenero(self.pilaNac,generoLibro) + librosEnPilaDelGenero(self.pilaInternac,generoLibro)
+        return cantGen
 
 
 ##################################
@@ -287,11 +244,13 @@ class EscritorioDeAtencion:
 
 
     def estanteriaMenosRecargada(self):
-      nFila = nCol = 0 ## inicializa en cero las variables nFila y nCol
-      minEstant = 999999 ## inicializa en 999999 el valor del minEstant
+      nFila = nCol = None ## inicializa en cero las variables nFila y nCol
+      minEstant = None ## inicializa en None el valor del minEstant
       for i in range(len(self.deposito)): ## bucle for para recorrer las filas del depósito
         for j in range(len(self.deposito[i])): ## bucle for para recorrer los elementos de cada fila del depósito
           if isinstance(self.deposito[i][j],Estanteria): # valida si el elemento del depósito es instancia de Estantería
+            if minEstant == None:
+              minEstant = self.deposito[i][j]
             if self.deposito[i][j].librosPorTipo()[0] < minEstant: # valida si la cantidad de librosPorTipo es menor que
             ## el mínimo actual
               minEstant = self.deposito[i][j].librosPorTipo()[0] ## asigna el valor de la cantidad de librosPorTipo a 
@@ -301,19 +260,14 @@ class EscritorioDeAtencion:
 
         
     def buscaEstanteria(self,nroEstanteria):
-      nFila = nCol = 0 ## inicializa en cero las variables nFila y nCol
-      encontrado = False ## setea variable encontrado en falso
+      nFila = nCol = None ## inicializa en cero las variables nFila y nCol
       for i in range(len(self.deposito)): ## bucle for para recorrer las filas del depósito
         for j in range(len(self.deposito[i])): ## bucle for para recorrer los elementos de cada fila del depósito
           if isinstance(self.deposito[i][j],Estanteria): # valida si el elemento del depósito es instancia de Estantería
-            if self.deposito[i][j].numero == nroEstanteria: # valida si el numero de la estantería del depósito actual
+            if self.deposito[i][j].nroDeEstanteria() == nroEstanteria: # valida si el numero de la estantería del depósito actual
             ## coincide con el nroEstanteria pasado por parámetro
               nFila = i; nCol = j ## asigna a las variables nFila y nCol los valores de los índices i, j actuales del bucle
-              encontrado = True ## setea en verdadero la variable encontrado
-      if encontrado: ## valida si fue encontrada la estantería
-        return nFila,nCol ## retorna los números de nFila y nCol del nroEstanteria
-      else: ## si no informa Exception
-        raise Exception("No se encontró la estantería con Nro",nroEstanteria)
+      return nFila,nCol ## retorna los números de nFila y nCol del nroEstanteria
 
     def guardarLibros(self,colaDeLibros):
       while not colaDeLibros.empty(): # bucle while no está vacía la colaDeLibros (pasada por parámetro)
@@ -336,41 +290,12 @@ class EscritorioDeAtencion:
       return pilaSacados ## retorna la pila conteniendo las referencias a los libros sacados
 
     def moverLibro(self, codigoLibro, nroEstanteriaOrigen, nroEstanteriaDestino):
-      ## se inicializan variables
-      encontrado = False
-      ubicado = False
-      nFila, nCol = self.deposito.shape ## se obtiene en nFila, nCol la forma con las dimensiones de la matriz deposito
-      f = 0 ## se inicializa en cero el indice de filas
-      libro = Libro()
-      while not encontrado and f < nFila: ## bucle while no encontrado y f es menor a nFila (contiene cantidad de filas)
-        c = 0 ## se inicializa en cero el indice de columnas
-        while not encontrado and c < nCol: ## bucle while no encontrado y el indice c de columnas es menor que nCol (cant columnas)
-          if isinstance(self.deposito[f][c],Estanteria) and self.deposito[f][c].numero == nroEstanteriaOrigen: ## valida si 
-          ## el elemento de la matriz es instancia de Estanteria y si el número de estantería coincide con el parámetro
-          ## nroEstanteriaOrigen
-            if self.deposito[f][c].buscarLibro(codigoLibro) != None: ## valida si no es None el resultado de
-              ## ejecutar la función buscarLibro en la estantería actual del depósito para el parámetro codigoLibro
-              libro = self.deposito[f][c].prestarLibro(codigoLibro) ## asigna el valor de referencia del libro que retorna
-              ## la función prestarLibro (y lo quia de la estantería Origen), con el codigoLibro pasado por parámetro.
-              encontrado = True ## setea en verdadero el valor de encontrado.
-          c += 1 ## le suma 1 al indice que recorre por columna
-        f += 1 ## le suma 1 al índice que recorre por fila
-      f = 0 ## se inicializa en cero el indice de filas para iniciar el recorrido para ubicar el libro retirado 
-      ## de nroEstanteriaOrigen
-      while not ubicado and f < nFila: ## bucle while no ubicado libro y f es menor a nFila (contiene cantidad de filas)
-        c = 0 ## se inicializa en cero el indice de columnas
-        while not ubicado and c < nCol: ## bucle while no encontrado y el indice c de columnas es menor que nCol (cant columnas)
-          if isinstance(self.deposito[f][c],Estanteria) and self.deposito[f][c].numero == nroEstanteriaDestino: ## valida si 
-          ## el elemento de la matriz es instancia de Estanteria y si el número de estantería coincide con el parámetro
-          ## nroEstanteriaDestino
-            self.deposito[f][c].guardarLibro(libro) ## guarda la referencia al libro en la estantería correspondiente
-            ## llamando a la función guardarLibro
-            ubicado = True ## setea en verdadero la variable ubicado
-          c += 1 ## le suma 1 al indice que recorre por columna
-        f += 1 ## le suma 1 al índice que recorre por fila
-      if not encontrado: ## valida si no fue encontrado el libro, arroja mensaje print.
-        print("No se encontró el código de libro o la EstanteríaOrigen o la EstanteríaDestino")
-      
-
-
+      nroFilaO, nroColO = self.deposito.buscaEstanteria(nroEstanteriaOrigen)
+      nroFilaD, nroColD = self.deposito.buscaEstanteria(nroEstanteriaDestino)
+      origenValido = nroFilaO != None and nroColO != None
+      destinoValido = nroFilaD != None and nroColD != None
+      if origenValido and destinoValido:
+        libro = self.deposito[nroFilaO][nroColO].prestarLibro(codigoLibro)
+        if libro != None:
+          self.deposito[nroFilaD][nroColD].guardarLibro(libro)
 
