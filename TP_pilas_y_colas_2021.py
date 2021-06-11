@@ -32,13 +32,21 @@ def validarTipoLibro(tipoLib):
   else:
     return tipoLib
 
+## Valido Codigo de Libro ##
+def validarCodigoLibro(codigoLib):
+  if not isinstance(codigoLib,CodigoLibro): ## verifica si codigoLib es instancia de CodigoLibro
+    raise Exception("El codigo de libro ingresado no es correcto")
+  else:
+    return codigoLib
 
+
+## Funciones auxiliares ##
 def libroEnPilaADeGenero(pila,generoDelLibro):
     encontrado = False
     libro = None
     auxPila = Pila()
     while not encontrado and not pila.empty():
-      if pila.top().generoDeLibro() == generoDelLibro:
+      if pila.top().generoDelLibro() == generoDelLibro:
         encontrado = True
         libro = pila.pop()
       else:
@@ -52,7 +60,7 @@ def buscarLibroEnPilaYRetira(pila,codigoDelLibro):
     libro = None
     auxPila = Pila()
     while not encontrado and not pila.empty():
-      if pila.top().codigoDeLibro() == codigoDelLibro:
+      if pila.top().codigoDelLibro() == codigoDelLibro:
         encontrado = True
         libro = pila.pop()
       else:
@@ -66,7 +74,7 @@ def buscarLibroEnPilaEInforma(pila,codigoDelLibro):
     libro = None
     auxPila = Pila()
     while not encontrado and not pila.empty():
-      if pila.top().codigoDeLibro() == codigoDelLibro:
+      if pila.top().codigoDelLibro() == codigoDelLibro:
         encontrado = True
         libro = pila.top()
       else:
@@ -90,7 +98,7 @@ def librosEnPilaDelGenero(pila,generoLibro):
 
 class Libro:
     def __init__(self,codigoLibro=CodigoLibro("zzz","99999"),genero=GeneroLibro.Teatro,nacionalidad=TipoLibro.Nacional):
-        self.codigoLibro = codigoLibro
+        self.codigoLibro = validarCodigoLibro(codigoLibro) ## llama a la función validarCodigoLibro para validar codigo
         self.genero = validarGenero(genero) ## llama a la función validarGenero para validar genero
         self.nacionalidad = validarTipoLibro(nacionalidad) ## llama a la función validarTipoLibro para validar nacionalidad
 
@@ -250,7 +258,7 @@ class EscritorioDeAtencion:
         for j in range(len(self.deposito[i])): ## bucle for para recorrer los elementos de cada fila del depósito
           if isinstance(self.deposito[i][j],Estanteria): # valida si el elemento del depósito es instancia de Estantería
             if minEstant == None:
-              minEstant = self.deposito[i][j]
+              minEstant = self.deposito[i][j].librosPorTipo()[0]
             if self.deposito[i][j].librosPorTipo()[0] < minEstant: # valida si la cantidad de librosPorTipo es menor que
             ## el mínimo actual
               minEstant = self.deposito[i][j].librosPorTipo()[0] ## asigna el valor de la cantidad de librosPorTipo a 
@@ -289,13 +297,29 @@ class EscritorioDeAtencion:
         colaCodLibros.pop() ## desencola el primer elemento de la cola
       return pilaSacados ## retorna la pila conteniendo las referencias a los libros sacados
 
+
     def moverLibro(self, codigoLibro, nroEstanteriaOrigen, nroEstanteriaDestino):
-      nroFilaO, nroColO = self.deposito.buscaEstanteria(nroEstanteriaOrigen)
-      nroFilaD, nroColD = self.deposito.buscaEstanteria(nroEstanteriaDestino)
+      ## rescatamos las "coordenadas" de las estanterias origen y destino
+      nroFilaO, nroColO = self.buscaEstanteria(nroEstanteriaOrigen)
+      nroFilaD, nroColD = self.buscaEstanteria(nroEstanteriaDestino)
+      ## validamos en unas variables que las estanterias existen en el deposito
       origenValido = nroFilaO != None and nroColO != None
       destinoValido = nroFilaD != None and nroColD != None
       if origenValido and destinoValido:
+        ## si las estanterias son validas entonces intentamos retirar el libro de la estanteria origen
         libro = self.deposito[nroFilaO][nroColO].prestarLibro(codigoLibro)
+        ## si el libro se encuentra en la estanteria origen entonces queda almacenado en la variable libro
         if libro != None:
+          ## Guardamos el libro en la estanteria destino
           self.deposito[nroFilaD][nroColD].guardarLibro(libro)
+        else:
+          print("El libro no se encontro en la estanteria origen.")
+        ## si el libro no se encontraba en la estanteria origen entonces no va a suceder nada
+        ## ya q no se va a intentar guardar el libro.
+      elif not origenValido and not destinoValido:
+        print("Las estanterias origen y destino no son validas")
+      elif origenValido and not destinoValido:
+        print("La estanteria destino no es valida")        
+      else:
+        print("La estanteria origen no es valida")
 

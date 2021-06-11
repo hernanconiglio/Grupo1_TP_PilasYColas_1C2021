@@ -15,5 +15,5 @@ class CodigoLibro: # TDA para definir el código de cada Libro
         cadenaPrint = self.codLetras + self.codNumero
         return cadenaPrint
 
-    def __eq__(self,otro):
+    def __eq__(self,otro): ## Esta funcion sobrecarga el operador "==" para que compare los tipos "CodigoLibro"
         return self.codLetras == otro.codLetras and self.codNumero == otro.codNumero
